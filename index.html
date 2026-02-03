@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>通知车主挪车</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+ 
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+                line-height: 1.6;
+                background-color: #f8f9fa;
+                color: #333;
+            }
+ 
+            .container {
+                max-width: 600px;
+                margin: 20px auto;
+                padding: 20px;
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+ 
+            h1 {
+                text-align: center;
+                color: #2c3e50;
+                margin-bottom: 20px;
+                font-size: 24px;
+            }
+          h3 {
+                font-size: 20px;
+                color: #28A745;
+                line-height: 50px;
+            }
+ 
+            .message-area {
+                margin-bottom: 20px;
+            }
+ 
+            textarea {
+                width: 100%;
+                height: 120px;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                resize: none;
+                font-size: 16px;
+                margin-bottom: 5px;
+            }
+ 
+            .char-count {
+                text-align: right;
+                color: #666;
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+ 
+            .templates {
+                margin-bottom: 20px;
+            }
+ 
+            .template-btn {
+                background: #f8f9fa;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                padding: 8px 15px;
+                margin: 0 5px 5px 0;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.3s ease;
+            }
+ 
+            .template-btn:hover {
+                background: #e9ecef;
+            }
+ 
+            .action-buttons {
+                display: flex;
+                gap: 10px;
+            }
+ 
+            button {
+                width: 100%;
+                padding: 15px;
+                margin: 10px 0;
+                font-size: 18px;
+                font-weight: bold;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: background 0.3s;
+            }
+ 
+            .notify-btn {
+                background: #28a745;
+            }
+ 
+            .notify-btn:hover {
+                background: #218838;
+            }
+ 
+            .call-btn {
+                background: #17a2b8;
+            }
+ 
+            .call-btn:hover {
+                background: #138496;
+            }
+ 
+            /* 模态框样式 */
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+            }
+ 
+            .modal-content {
+                position: relative;
+                background-color: white;
+                margin: 20% auto;
+                padding: 20px;
+                width: 90%;
+                max-width: 400px;
+                border-radius: 10px;
+                text-align: center;
+            }
+ 
+            .modal-title {
+                margin-bottom: 15px;
+                font-size: 18px;
+                color: #2c3e50;
+            }
+ 
+            .modal-phone {
+                font-size: 24px;
+                color: #007bff;
+                margin-bottom: 20px;
+            }
+ 
+            .modal-buttons {
+                display: flex;
+                gap: 10px;
+                justify-content: center;
+            }
+ 
+            .modal-btn {
+                padding: 8px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: all 0.3s ease;
+            }
+ 
+            .confirm-btn {
+                background: #28a745;
+                color: white;
+            }
+ 
+            .confirm-btn:hover {
+                background: #218838;
+            }
+ 
+            .cancel-btn {
+                background: #dc3545;
+                color: white;
+            }
+ 
+            .cancel-btn:hover {
+                background: #c82333;
+            }
+            .car_title{display: flex;align-items: center;justify-content: center;flex-wrap: nowrap;line-height: 30px;}
+            .car_title img{width: 130px;padding:10px;}
+            .car_title div{font-size: 25px;}
+ 
+            .template-buttons {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+                margin: 24px 0;
+            }
+            .template-button {
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                background: #32C9DE;
+                cursor: pointer;
+                font-size: 14px;
+                transition: background-color 0.2s ease;
+            }
+            .template-button:hover{
+                background: #28A555;  
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+ 
+            <div class="car_title">
+                <div>通知</div>
+                <img src="https://zgh.com/wp-content/uploads/2021/11/logo-geely-no-margin.png">
+                <div>车主挪车</div>
+            </div>
+            <h3 align="center">临时停靠 请多关照</h3>
+            <div class="message-area">
+                <textarea id="messageInput" placeholder="请输入微信通知内容"
+                    oninput="updateCharCount()">您好，有人需要您挪车，请及时处理。</textarea>
+                <div id="tips" style="color: #666666; font-size: 1rem;">可自行编辑微信通知消息，带来不便，请您见谅</div>
+                <div id="charCount" class="char-count">0/200</div>
+            </div>
+            <div class="template-buttons">
+                <button class="template-button" onclick="useTemplate('default')">
+                    默认通知
+                </button>
+                <button class="template-button" onclick="useTemplate('polite')">
+                    礼貌通知
+                </button>
+                <button class="template-button" onclick="useTemplate('urgent')">
+                    紧急通知
+                </button>
+            </div>
+            <p>通知车主，请点击以下按钮</p>
+            <button class="notify-btn" id="notifyButton" onclick="notifyOwner()">微信通知车主</button>
+            <button class="call-btn" onclick="callOwner()">拨打车主电话</button>
+        </div>
+        <script>
+            updateCharCount();
+            const charCountEl = document.getElementById('charCount');
+            const templates = {
+                default: "您好，有人需要您挪车，请及时处理。",
+                polite: "您好，很抱歉打扰您。您的爱车可能影响到他人通行，请问方便移动一下吗？",
+                urgent: "紧急情况！您的车辆阻碍消防通道，请立即挪车！"
+            };
+ 
+            function useTemplate(type) {
+                messageInput.value = templates[type] || "";
+                charCountEl.textContent = messageInput.value.length;
+            }
+ 
+            function startCooldown(duration) {
+                const button = document.getElementById('notifyButton');
+                button.disabled = true;
+                button.classList.add('disabled');
+              
+                // 使用后端提供的冷却时间
+                let cooldown = duration;
+                button.textContent = `冷却中 (${cooldown}s)`;
+              
+                const interval = setInterval(() => {
+                    cooldown -= 1;
+                    if (cooldown > 0) {
+                        button.textContent = `冷却中 (${cooldown}s)`;
+                    } else {
+                        clearInterval(interval);
+                        button.disabled = false;
+                        button.classList.remove('disabled');
+                        button.textContent = "通知车主挪车";
+                    }
+                }, 1000);
+            }
+ 
+            function notifyOwner() {
+                const messageInput = document.getElementById('messageInput');
+                fetch("https://wxpusher.zjiecode.com/api/send/message", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            //Token
+                            appToken: "AT_你的ATID",
+                            content: messageInput.value.trim(),
+                            contentType: 1,
+                            //通知对象的UID
+                            uids: ["UID_你的UID","UID_你的UID2"]
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.code === 1000) {
+                            alert("通知已发送！");
+                             // 这里启动30秒的冷却
+                            startCooldown(30);
+                        } else {
+                            alert("发送失败，请稍后重试。");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error sending notification:", error);
+                        alert("发送失败，请检查网络连接。");
+                    });
+            }
+ 
+            function callOwner() {
+            //这里是手机号码
+                window.location.href = "tel:17521302018";
+            }
+            function updateCharCount() {
+                const messageInput = document.getElementById('messageInput');
+                const charCount = document.getElementById('charCount');
+                const notifyBtn = document.getElementsByClassName('notify-btn');
+                const currentLength = messageInput.value.length;
+ 
+                charCount.textContent = currentLength + '/200';
+                if (currentLength > 200) {
+                    charCount.style.color = '#dc3545';
+                } else {
+                    charCount.style.color = '#666';
+                }
+            }
+        </script>
+    </body>
+</html>
