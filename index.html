@@ -209,30 +209,10 @@
         <div class="container">
  
             <div class="car_title">
-                <div>通知</div>
-                <img src="https://zgh.com/wp-content/uploads/2021/11/logo-geely-no-margin.png">
-                <div>车主挪车</div>
+                <div>通知</div><div>车主挪车</div>
             </div>
             <h3 align="center">临时停靠 请多关照</h3>
-            <div class="message-area">
-                <textarea id="messageInput" placeholder="请输入微信通知内容"
-                    oninput="updateCharCount()">您好，有人需要您挪车，请及时处理。</textarea>
-                <div id="tips" style="color: #666666; font-size: 1rem;">可自行编辑微信通知消息，带来不便，请您见谅</div>
-                <div id="charCount" class="char-count">0/200</div>
-            </div>
-            <div class="template-buttons">
-                <button class="template-button" onclick="useTemplate('default')">
-                    默认通知
-                </button>
-                <button class="template-button" onclick="useTemplate('polite')">
-                    礼貌通知
-                </button>
-                <button class="template-button" onclick="useTemplate('urgent')">
-                    紧急通知
-                </button>
-            </div>
             <p>通知车主，请点击以下按钮</p>
-            <button class="notify-btn" id="notifyButton" onclick="notifyOwner()">微信通知车主</button>
             <button class="call-btn" onclick="callOwner()">拨打车主电话</button>
         </div>
         <script>
